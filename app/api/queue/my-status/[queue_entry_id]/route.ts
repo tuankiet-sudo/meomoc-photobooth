@@ -15,7 +15,8 @@ export async function GET(_: Request, { params }: { params: Promise<{ queue_entr
 
   const { data: booth } = await supabaseAdmin
     .from('booths')
-    .select('current_customer_ordinal, estimated_session_duration_minutes')
+    // --- Add `name` to the select query ---
+    .select('name, current_customer_ordinal, estimated_session_duration_minutes')
     .eq('id', entry.booth_id)
     .single();
 
@@ -26,6 +27,8 @@ export async function GET(_: Request, { params }: { params: Promise<{ queue_entr
   const estimated_wait_time = Math.max(0, people_ahead) * session_minutes;
 
   return NextResponse.json({
+    // --- Add `booth_name` to the response ---
+    booth_name: booth?.name,
     ordinal_number: entry.ordinal_number,
     arrival_status: entry.arrival_status,
     number_of_customers_before: Math.max(0, people_ahead),

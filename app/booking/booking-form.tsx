@@ -3,15 +3,28 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import {
-  TextField, Button, FormControl, InputLabel, Select,
-  MenuItem, Box, Typography, CircularProgress, Alert, Grid,
+  TextField,
+  Button,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Box,
+  Typography,
+  CircularProgress,
+  Alert,
+  Grid,
 } from "@mui/material";
 
 export function BookingForm({ booths }: { booths: any[] }) {
   const router = useRouter();
   const [boothId, setBoothId] = useState("");
   const [customerName, setCustomerName] = useState("");
-  const [contactInfo, setContactInfo] = useState({ phone: "", email: "", birthday: "" });
+  const [contactInfo, setContactInfo] = useState({
+    phone: "",
+    email: "",
+    birthday: "",
+  });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -20,8 +33,14 @@ export function BookingForm({ booths }: { booths: any[] }) {
     setLoading(true);
     setError("");
 
+    // --- Validation Checks ---
     if (!customerName) {
       setError("Cho tụi tui xin tên với!");
+      setLoading(false);
+      return;
+    }
+    if (!contactInfo.phone) { // Added check for phone number
+      setError("Bạn ơi, cho tụi mình xin số điện thoại nhé!");
       setLoading(false);
       return;
     }
@@ -60,14 +79,18 @@ export function BookingForm({ booths }: { booths: any[] }) {
       component="form"
       onSubmit={handleSubmit}
       sx={{
-        mt: 4, p: { xs: 2, sm: 3 }, borderRadius: 3,
+        mt: 4,
+        p: { xs: 2, sm: 3 },
+        borderRadius: 3,
         boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
         bgcolor: "rgba(255, 255, 255, 0.7)",
-        backdropFilter: "blur(8px)", maxWidth: "500px", mx: "auto",
+        backdropFilter: "blur(8px)",
+        maxWidth: "500px",
+        mx: "auto",
       }}
     >
       <Typography variant="h2" component="h2" gutterBottom align="center">
-        Điền Thông Tin Thôi!
+        Điền Thông Tin Thui!
       </Typography>
       <Grid container spacing={2}>
         <Grid size={{xs:12}}>
@@ -79,32 +102,78 @@ export function BookingForm({ booths }: { booths: any[] }) {
               label="Chọn Booth"
               onChange={(e) => setBoothId(e.target.value)}
             >
-              <MenuItem value=""><em>Bạn thích booth nào?</em></MenuItem>
+              <MenuItem value="">
+                <em>Bạn thích booth nào?</em>
+              </MenuItem>
               {booths.map((booth) => (
-                <MenuItem key={booth.id} value={booth.id}>{booth.name}</MenuItem>
+                <MenuItem key={booth.id} value={booth.id}>
+                  {booth.name}
+                </MenuItem>
               ))}
             </Select>
           </FormControl>
         </Grid>
         <Grid size={{xs:12}}>
-          <TextField fullWidth required label="Tên của bạn" value={customerName} onChange={(e) => setCustomerName(e.target.value)} />
+          <TextField
+            fullWidth
+            required
+            label="Tên của bạn"
+            value={customerName}
+            onChange={(e) => setCustomerName(e.target.value)}
+          />
         </Grid>
         <Grid size={{xs:12, sm:6}}>
-          <TextField fullWidth label="SĐT (Hông bắt buộc)" type="tel" value={contactInfo.phone} onChange={(e) => setContactInfo({ ...contactInfo, phone: e.target.value })} />
+          <TextField
+            fullWidth
+            required // <-- Make phone number required
+            label="Số Điện Thoại" // <-- Updated label
+            type="tel"
+            value={contactInfo.phone}
+            onChange={(e) =>
+              setContactInfo({ ...contactInfo, phone: e.target.value })
+            }
+          />
         </Grid>
         <Grid size={{xs:12, sm:6}}>
-          <TextField fullWidth label="Email (Có cũng được)" type="email" value={contactInfo.email} onChange={(e) => setContactInfo({ ...contactInfo, email: e.target.value })} />
+          <TextField
+            fullWidth
+            label="Email (Hông bắt buộc)"
+            type="email"
+            value={contactInfo.email}
+            onChange={(e) =>
+              setContactInfo({ ...contactInfo, email: e.target.value })
+            }
+          />
         </Grid>
         <Grid size={{xs:12}}>
-          <TextField fullWidth label="Sinh nhật (Để tụi tui Zui lây ^^)" type="date" InputLabelProps={{ shrink: true }} value={contactInfo.birthday} onChange={(e) => setContactInfo({ ...contactInfo, birthday: e.target.value })} />
+          <TextField
+            fullWidth
+            label="Sinh nhật (Để tụi tui Zui lây ^^)"
+            type="date"
+            InputLabelProps={{ shrink: true }}
+            value={contactInfo.birthday}
+            onChange={(e) =>
+              setContactInfo({ ...contactInfo, birthday: e.target.value })
+            }
+          />
         </Grid>
         <Grid size={{xs:12}}>
-          <Button type="submit" variant="contained" color="primary" fullWidth disabled={loading}>
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            fullWidth
+            disabled={loading}
+          >
             {loading ? <CircularProgress size={20} color="inherit" /> : "Chốt Đơn!"}
           </Button>
         </Grid>
       </Grid>
-      {error && <Alert severity="error" sx={{ mt: 2, borderRadius: 2 }}>{error}</Alert>}
+      {error && (
+        <Alert severity="error" sx={{ mt: 2, borderRadius: 2 }}>
+          {error}
+        </Alert>
+      )}
     </Box>
   );
 }

@@ -28,6 +28,7 @@ async function getAdminData() {
         id: row.queue_entry_id,
         ordinal_number: row.queue_ordinal_number,
         customer_name: row.customer_name,
+        customer_phone: row.customer_phone || null, // Ensure phone is included
       });
     }
   }

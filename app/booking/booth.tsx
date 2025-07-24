@@ -60,7 +60,7 @@ export function Booth({ booth }: { booth: any }) {
         </Box>
       </Box>
       <CardContent sx={{ flexGrow: 1, p: 2 }}>
-        <Typography gutterBottom variant="h5" component="h2">
+        <Typography gutterBottom variant="h5" component="h2" color={booth.name === "OverBeann" ? "#380c0f" : booth.name === "Forest Winkk" ? "#00b14f" : "#880000"}>
           {booth.name}
         </Typography>
         <Typography variant="body1" color="text.secondary">

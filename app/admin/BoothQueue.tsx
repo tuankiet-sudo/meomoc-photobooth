@@ -23,12 +23,15 @@ interface BoothData {
     id: string;
     ordinal_number: number;
     customer_name: string | null;
+    customer_phone: string | null;
   }[];
 }
 
 export function BoothQueue({ booth }: { booth: BoothData }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+
+  console.log(booth);
 
   const handleNextCustomer = async () => {
     setLoading(true);
@@ -61,16 +64,37 @@ export function BoothQueue({ booth }: { booth: BoothData }) {
 
   return (
     <Paper elevation={3} sx={{ p: 2, borderRadius: 3, height: "100%" }}>
-      <Typography variant="h5" component="h2" gutterBottom>
+      <Typography variant="h5" component="h2" color={booth.name === "OverBeann" ? "#380c0f" : booth.name === "Forest Winkk" ? "#00b14f" : "#880000"} gutterBottom>
         {booth.name}
       </Typography>
-      <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 2 }}>
-        <Typography variant="body1">Đang phục vụ số:</Typography>
-        <Chip
-          label={currentOrdinal.toString().padStart(3, "0")}
-          color="primary"
-          sx={{ fontWeight: "bold", fontSize: "1.2rem" }}
-        />
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+
+            <Typography variant="body1">Đang phục vụ:</Typography>
+
+            <Chip
+
+              label={currentOrdinal.toString().padStart(3, "0")}
+
+              color="primary"
+
+              sx={{ fontWeight: "bold" }}
+
+            />
+
+        </Box>
+
+        <Box sx={{ textAlign: 'right' }}>
+
+            <Typography variant="body1">
+
+              {booth.queue.length} người đang chờ
+
+            </Typography>
+
+        </Box>
+
       </Box>
       <Button
         variant="contained"
@@ -85,10 +109,17 @@ export function BoothQueue({ booth }: { booth: BoothData }) {
       <Typography variant="subtitle1" sx={{ mt: 2, mb: 1 }}>
         Hàng chờ:
       </Typography>
-      <Box sx={{ maxHeight: 300, overflowY: "auto" }}>
+      <Box sx={booth.queue.length > 10 ? { 
+
+          maxHeight: 300, 
+
+          overflowY: 'auto' 
+
+        } : {}}>
         <List dense>
           {booth.queue.map((entry, index) => {
             const customerName = entry.customer_name || "Khách vãng lai";
+            console.log(`Queue Entry: ${entry.ordinal_number} - ${customerName} | Phone: ${entry.customer_phone || "N/A"}`);
             
             return (
               <ListItem
@@ -97,7 +128,7 @@ export function BoothQueue({ booth }: { booth: BoothData }) {
                 sx={{ bgcolor: index === 0 ? "action.hover" : "transparent" }}
               >
                 <ListItemText
-                  primary={`${entry.ordinal_number}. ${customerName}`}
+                  primary={`${entry.ordinal_number}. ${customerName} | SĐT: ${entry.customer_phone || "Không có"}`}
                   secondary={index === 0 ? "Tiếp theo" : null}
                 />
               </ListItem>

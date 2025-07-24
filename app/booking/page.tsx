@@ -36,7 +36,7 @@ export default async function BookingPage() {
     <Box sx={{ bgcolor: "background.default", minHeight: "100vh" }}>
       <Container sx={{ py: { xs: 3, md: 5 } }}>
         <Typography variant="h1" align="center" gutterBottom>
-          Đặt Lịch Chụp Hình Nàooo!
+          Lấy số trước thui nàooo!
         </Typography>
         <Typography
           variant="h4"
@@ -45,7 +45,7 @@ export default async function BookingPage() {
           fontWeight={450}
           sx={{ mb: 4 }}
         >
-          Chọn một chiếc booth thật dễ thương để ghi lại khoảnh khắc của bạn nhé!
+          Chọn booth mà bạn "iu" thích và lấy số trước để rút ngắn thời gian chờ đợi bạn nhé!
         </Typography>
 
         <Box
