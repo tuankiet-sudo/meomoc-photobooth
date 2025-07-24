@@ -74,7 +74,7 @@ export default function StatusPage() {
     };
 
     fetchStatus();
-    const intervalId = setInterval(fetchStatus, 3000);
+    const intervalId = setInterval(fetchStatus, 30000);
 
     return () => clearInterval(intervalId);
   }, [queue_entry_id]);
@@ -131,7 +131,7 @@ export default function StatusPage() {
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                 <LoopIcon color="secondary" />
                 <Typography variant="body1">
-                    Tụi tui tự làm mới mỗi 3 giây đó nha
+                    Tụi tui tự làm mới mỗi 30 giây đó nha
                 </Typography>
             </Box>
         </Box>

@@ -1,40 +1,41 @@
 import { supabaseAdmin } from "@/utils/supabase/admin";
-import { Box, Typography, Container, Paper, Grid } from "@mui/material";
+import { Box, Typography, Container, Grid } from "@mui/material";
 import { BoothQueue } from "./BoothQueue";
 
-async function getQueueData() {
-  // Fetch all active booths
-  const { data: booths, error: boothsError } = await supabaseAdmin
-    .from("booths")
-    .select("id, name, current_customer_ordinal")
-    .eq("is_active", true)
-    .order("name");
+async function getAdminData() {
+  // Call the new SQL function instead of doing complex selects
+  const { data, error } = await supabaseAdmin.rpc('get_queue_data');
 
-  if (boothsError) throw new Error("Could not fetch booths.");
+  if (error) {
+    console.error("RPC Error:", error);
+    throw new Error("Could not fetch admin data.");
+  }
 
-  // Fetch all waiting or in-progress queue entries for those booths
-  const boothIds = booths.map((b) => b.id);
-  const { data: entries, error: entriesError } = await supabaseAdmin
-    .from("queue_entries")
-    .select("id, booth_id, ordinal_number, customers(name)")
-    .in("booth_id", boothIds)
-    .in("status", ["waiting", "in_progress"])
-    .order("ordinal_number", { ascending: true });
-    
-  if (entriesError) throw new Error("Could not fetch queue entries.");
-
-  // Group entries by booth
-  const queueData = booths.map(booth => ({
-    ...booth,
-    queue: entries.filter(entry => entry.booth_id === booth.id)
-  }));
-
-  return queueData;
+  // Group the flat data by booth
+  const boothsMap = new Map();
+  for (const row of data) {
+    if (!boothsMap.has(row.booth_id)) {
+      boothsMap.set(row.booth_id, {
+        id: row.booth_id,
+        name: row.booth_name,
+        current_customer_ordinal: row.current_customer_ordinal,
+        queue: [],
+      });
+    }
+    // Only add queue entries if they exist (LEFT JOIN can produce nulls)
+    if (row.queue_entry_id) {
+      boothsMap.get(row.booth_id).queue.push({
+        id: row.queue_entry_id,
+        ordinal_number: row.queue_ordinal_number,
+        customer_name: row.customer_name,
+      });
+    }
+  }
+  return Array.from(boothsMap.values());
 }
 
 export default async function AdminPage() {
-  const queueData = await getQueueData();
-  console.log("Queue Data:", queueData);
+  const queueData = await getAdminData();
 
   return (
     <Box sx={{ bgcolor: "background.default", minHeight: "100vh", py: 4 }}>
@@ -47,8 +48,8 @@ export default async function AdminPage() {
         </Typography>
         <Grid container spacing={4}>
           {queueData.map((booth) => (
-            <Grid size ={{ xs:12, md:6, lg:4}} key={booth.id}>
-                <BoothQueue booth={booth} />
+            <Grid size={{xs:12, md:6, lg:4}} key={booth.id}>
+              <BoothQueue booth={booth} />
             </Grid>
           ))}
         </Grid>
