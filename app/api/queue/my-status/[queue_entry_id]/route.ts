@@ -2,7 +2,7 @@ import { supabaseAdmin } from '@/utils/supabase/admin';
 import { NextResponse } from 'next/server';
 
 export async function GET(_: Request, { params }: { params: Promise<{ queue_entry_id: string }> }) {
-  const id = (await params).queue_entry_id;
+  const id = await params;
 
   const { data: entry, error: entryError } = await supabaseAdmin
     .from('queue_entries')
