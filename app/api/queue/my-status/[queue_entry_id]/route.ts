@@ -1,8 +1,14 @@
 import { supabaseAdmin } from '@/utils/supabase/admin';
 import { NextResponse } from 'next/server';
 
-export async function GET(_: Request, { params }: { params: { queue_entry_id: string } }) {
-  const id = params.queue_entry_id;
+type Context = {
+  params: {
+    queue_entry_id: string;
+  };
+};
+
+export async function GET(_: Request, context: Context) {
+  const id = context.params.queue_entry_id;
 
   const { data: entry, error: entryError } = await supabaseAdmin
     .from('queue_entries')
