@@ -18,35 +18,35 @@ let theme = createTheme({
     },
   },
   typography: {
-    fontFamily: "var(--font-geist-sans)",
+    // Set Paytone One as the default font for everything
+    fontFamily: "var(--font-paytone-one), sans-serif", 
     h1: {
       color: "#880000",
-      fontWeight: 700,
-      fontSize: "2.5rem", // Reduced size
+      fontWeight: 400,
+      fontSize: "2.5rem",
     },
     h2: {
       color: "#880000",
-      fontWeight: 600,
-      fontSize: "1.5rem", // Reduced size
+      fontWeight: 400,
+      fontSize: "1.5rem",
     },
     h4: {
       color: "#493528",
-      fontWeight: 600,
-      fontSize: "1.1rem", // Reduced size
+      fontWeight: 400,
+      fontSize: "1.2rem",
     },
     h5: {
-      fontSize: "1.1rem", // Reduced size
-      fontWeight: 600,
+      fontSize: "1.1rem",
+      fontWeight: 400,
     },
     body1: {
-      color: "black",
-      fontSize: "0.9rem", // Reduced size
+      fontSize: "0.9rem",
     },
   },
   components: {
     MuiButton: {
       defaultProps: {
-        size: "small", // Make all buttons smaller
+        size: "small",
       },
       styleOverrides: {
         root: {
@@ -57,13 +57,13 @@ let theme = createTheme({
     },
     MuiTextField: {
       defaultProps: {
-        size: "small", // Make all text fields smaller
+        size: "small",
         variant: "outlined",
       },
     },
     MuiSelect: {
       defaultProps: {
-        size: "small", // Make all selects smaller
+        size: "small",
       },
     },
     MuiInputLabel: {
@@ -74,6 +74,6 @@ let theme = createTheme({
   },
 });
 
-theme = responsiveFontSizes(theme, { factor: 3 }); // Adjust responsive scaling
+theme = responsiveFontSizes(theme, { factor: 3 });
 
 export default theme;

@@ -2,11 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import { Box, Typography, Container, CircularProgress, Paper, Divider, Chip } from "@mui/material";
+import { Box, Typography, Container, CircularProgress, Paper, Divider, Chip, TextField, Button } from "@mui/material";
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import PeopleOutlineIcon from '@mui/icons-material/PeopleOutline';
 import LoopIcon from '@mui/icons-material/Loop';
-import ConfirmationNumberOutlinedIcon from '@mui/icons-material/ConfirmationNumberOutlined';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+
 
 interface QueueStatus {
   ordinal_number: number;
@@ -16,20 +17,29 @@ interface QueueStatus {
   current_customer_ordinal: number;
 }
 
-// Helper function to format wait time
 const formatWaitTime = (minutes: number) => {
-  if (minutes < 1) return "Less than a minute";
+  if (minutes < 1) return "Chưa tới 1 phút";
   const hours = Math.floor(minutes / 60);
   const remainingMinutes = Math.round(minutes % 60);
   let result = "";
-  if (hours > 0) {
-    result += `${hours} hour${hours > 1 ? 's' : ''} `;
-  }
-  if (remainingMinutes > 0) {
-    result += `${remainingMinutes} minute${remainingMinutes > 1 ? 's' : ''}`;
-  }
+  if (hours > 0) result += `${hours} giờ `;
+  if (remainingMinutes > 0) result += `${remainingMinutes} phút`;
   return result.trim();
 };
+
+const statusToVietnamese = (status: string) => {
+    const lowerCaseStatus = status.toLowerCase();
+    switch(lowerCaseStatus) {
+        case 'waiting':
+            return 'ĐANG CHỜ';
+        case 'in_progress':
+            return 'TỚI LƯỢT RỒI';
+        case 'completed':
+            return 'ĐÃ XONG';
+        default:
+            return 'CHỜ XÍU';
+    }
+}
 
 export default function StatusPage() {
   const params = useParams();
@@ -38,17 +48,20 @@ export default function StatusPage() {
   const [status, setStatus] = useState<QueueStatus | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
+  const [currentUrl, setCurrentUrl] = useState("");
 
   useEffect(() => {
+    if (typeof window !== "undefined") {
+      setCurrentUrl(window.location.href);
+    }
+
     if (!queue_entry_id) return;
 
     const fetchStatus = async () => {
       try {
         const response = await fetch(`/api/queue/my-status/${queue_entry_id}`);
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.error || "Could not fetch status.");
-        }
+        if (!response.ok) throw new Error("Huhu, không tải được trạng thái. Bạn F5 thử xem!");
         const data = await response.json();
         const current_customer_ordinal = data.ordinal_number - data.number_of_customers_before - 1;
         setStatus({ ...data, current_customer_ordinal });
@@ -60,55 +73,43 @@ export default function StatusPage() {
       }
     };
 
-    fetchStatus(); // Initial fetch
-    const intervalId = setInterval(fetchStatus, 3000); // Fetch every 3 seconds
+    fetchStatus();
+    const intervalId = setInterval(fetchStatus, 3000);
 
-    return () => clearInterval(intervalId); // Cleanup on component unmount
+    return () => clearInterval(intervalId);
   }, [queue_entry_id]);
 
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(currentUrl).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000); // Show "Copied!" message for 2 seconds
+    });
+  };
+
   if (loading) {
-    return (
-      <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh">
-        <CircularProgress />
-      </Box>
-    );
+    return <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh"><CircularProgress /></Box>;
   }
 
   if (error) {
-    return (
-      <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh">
-        <Typography color="error">Error: {error}</Typography>
-      </Box>
-    );
+    return <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh"><Typography color="error">{error}</Typography></Box>;
   }
 
   return (
     <Container maxWidth="sm" sx={{ py: { xs: 3, md: 5 } }}>
       <Paper elevation={4} sx={{ p: {xs: 2, sm: 4}, borderRadius: 4, textAlign: 'center', bgcolor: 'rgba(255, 255, 255, 0.85)' }}>
         <Typography variant="h5" component="h1" color="text.secondary">
-          Your Queue Number
+          Số thứ tự của bạn đâyyy
         </Typography>
-        <Typography
-          variant="h1"
-          component="div"
-          sx={{
-            fontWeight: 700,
-            color: '#007aff', // A nice blue color
-            my: 2,
-            fontSize: { xs: '6rem', sm: '8rem' },
-          }}
-        >
+        <Typography variant="h1" component="div" sx={{ fontWeight: 700, color: '#007aff', my: 2, fontSize: { xs: '6rem', sm: '8rem' } }}>
           {status?.ordinal_number.toString().padStart(3, '0')}
         </Typography>
         
-        <Chip label={status?.arrival_status.toUpperCase() || 'WAITING'} color="primary" sx={{mb: 2}}/>
+        <Chip label={statusToVietnamese(status?.arrival_status || '')} color="primary" sx={{mb: 2}}/>
         
-        <Divider sx={{ my: 2 }}>
-            <Typography variant="caption">Current Status</Typography>
-        </Divider>
+        <Divider sx={{ my: 2 }}><Typography variant="caption">Tình hình hiện tại</Typography></Divider>
 
         <Box>
-            <Typography variant="h6" color="text.secondary">Current Number Being Served</Typography>
+            <Typography variant="h6" color="text.secondary">Đang tới lượt số</Typography>
             <Typography variant="h4" component="p" fontWeight="bold">
                 {Math.max(0, status?.current_customer_ordinal || 0).toString().padStart(3, '0')}
             </Typography>
@@ -118,20 +119,45 @@ export default function StatusPage() {
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                 <AccessTimeIcon color="secondary" />
                 <Typography variant="body1">
-                    <strong>Estimated wait time:</strong> {formatWaitTime(status?.estimated_wait_time || 0)}
+                    <strong>Đợi khoảng:</strong> {formatWaitTime(status?.estimated_wait_time || 0)}
                 </Typography>
             </Box>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                 <PeopleOutlineIcon color="secondary" />
                 <Typography variant="body1">
-                    <strong>People ahead of you:</strong> {status?.number_of_customers_before}
+                    <strong>Phía trước còn:</strong> {status?.number_of_customers_before} người nữa thui
                 </Typography>
             </Box>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                 <LoopIcon color="secondary" />
                 <Typography variant="body1">
-                    Automatically updates every 3 seconds
+                    Tụi tui tự làm mới mỗi 3 giây đó nha
                 </Typography>
+            </Box>
+        </Box>
+        
+        {/* --- Shareable Link Box --- */}
+        <Box sx={{ mt: 4, pt: 2, borderTop: '1px solid', borderColor: 'divider' }}>
+            <Typography variant="body2" sx={{ mb: 1, fontWeight: 'bold' }}>
+              Chia sẻ trang chờ này cho bạn bè!
+            </Typography>
+            <Box sx={{ display: 'flex', gap: 1 }}>
+                <TextField
+                    fullWidth
+                    variant="outlined"
+                    size="small"
+                    value={currentUrl}
+                    InputProps={{
+                        readOnly: true,
+                    }}
+                />
+                <Button 
+                    variant="contained" 
+                    onClick={handleCopyLink}
+                    sx={{ width: 120, bgcolor: copied ? 'success.main' : 'primary.main' }}
+                >
+                    {copied ? 'Đã chép!' : 'Chép link'}
+                </Button>
             </Box>
         </Box>
 

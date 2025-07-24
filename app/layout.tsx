@@ -1,18 +1,18 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+// Import only Paytone One
+import { Paytone_One } from "next/font/google"; 
 import "./globals.css";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "./theme";
 import { CssBaseline } from "@mui/material";
+import Header from "@/components/Header";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+// Configure Paytone One
+const paytoneOne = Paytone_One({
+  weight: ['400'], // Paytone One only has one weight
+  subsets: ['vietnamese', 'latin'], // Include Vietnamese subset
+  display: 'swap',
+  variable: '--font-paytone-one',
 });
 
 export const metadata: Metadata = {
@@ -26,13 +26,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="vi">
       <ThemeProvider theme={theme}>
         <CssBaseline />
+        {/* Apply only the Paytone One font variable */}
         <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+          className={`${paytoneOne.variable} antialiased`}
         >
-          {children}
+          <Header />
+          <main>{children}</main>
         </body>
       </ThemeProvider>
     </html>
