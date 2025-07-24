@@ -2,12 +2,12 @@ import { supabaseAdmin } from '@/utils/supabase/admin';
 import { NextResponse } from 'next/server';
 
 export async function GET(_: Request, { params }: { params: Promise<{ queue_entry_id: string }> }) {
-  const id = await params;
+  const {queue_entry_id} = await params;
 
   const { data: entry, error: entryError } = await supabaseAdmin
     .from('queue_entries')
     .select('id, booth_id, ordinal_number, arrival_status')
-    .eq('id', id)
+    .eq('id', queue_entry_id)
     .single();
 
   if (entryError || !entry)
