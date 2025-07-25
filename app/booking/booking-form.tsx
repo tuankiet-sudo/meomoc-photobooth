@@ -89,7 +89,7 @@ export function BookingForm({ booths }: { booths: any[] }) {
         mx: "auto",
       }}
     >
-      <Typography variant="h2" component="h2" gutterBottom align="center">
+      <Typography variant="h2" component="h2" gutterBottom align="center" mb={2}>
         Điền Thông Tin Thui!
       </Typography>
       <Grid container spacing={2}>

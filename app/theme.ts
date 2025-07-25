@@ -5,7 +5,7 @@ import { createTheme, responsiveFontSizes } from "@mui/material/styles";
 let theme = createTheme({
   palette: {
     background: {
-      default: "#eaddc1",
+      default: "#ffffff",
     },
     primary: {
       main: "#880000",

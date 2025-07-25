@@ -1,7 +1,7 @@
-import { Booth } from "./booth";
 import { BookingForm } from "./booking-form";
 import { Container, Typography, Box } from "@mui/material";
 import { supabaseAdmin } from "@/utils/supabase/admin";
+import { InteractiveShowcase } from "./InteractiveShowcase";
 
 export default async function BookingPage() {
   const { data, error } = await supabaseAdmin
@@ -35,45 +35,26 @@ export default async function BookingPage() {
   return (
     <Box sx={{ bgcolor: "background.default", minHeight: "100vh" }}>
       <Container sx={{ py: { xs: 3, md: 5 } }}>
-        <Typography variant="h1" align="center" gutterBottom>
-          Lấy số trước thui nàooo!
-        </Typography>
-        <Typography
-          variant="h4"
-          align="center"
-          color="text.secondary"
-          fontWeight={450}
-          sx={{ mb: 4 }}
-        >
-          Chọn booth mà bạn "iu" thích và lấy số trước để rút ngắn thời gian chờ đợi bạn nhé!
-        </Typography>
 
-        <Box
-          sx={{
-            display: 'flex',
-            overflowX: 'auto',
-            py: 2,
-            gap: 3, 
-            scrollSnapType: 'x mandatory',
-            '&::-webkit-scrollbar': { height: '8px' },
-            '&::-webkit-scrollbar-thumb': { backgroundColor: 'rgba(0,0,0,0.2)', borderRadius: '4px' },
-          }}
-        >
-          {booths.map((booth: any) => (
-            <Box
-              key={booth.id}
-              sx={{
-                flex: '0 0 auto',
-                width: { xs: '70%', sm: '35%', md: '25%' }, 
-                scrollSnapAlign: 'start',
-              }}
-            >
-              <Booth booth={booth} />
-            </Box>
-          ))}
+        {/* --- REFINED HERO SECTION --- */}
+        <Box sx={{ textAlign: 'center', mb: 3 }}>
+          <Typography 
+            variant="h2" 
+            component="h1" 
+            sx={{ fontWeight: 'bold', color: 'primary.main' }}
+          >
+            Chọn Ngay Concept & Chốt Đơn!
+          </Typography>
+          <Typography variant="h5" color="secondary.main" sx={{ mt: 1 }}>
+            Chọn booth bạn thích bên dưới để xem ảnh và lấy số chờ ngay.
+          </Typography>
         </Box>
+        
+        {/* --- INTERACTIVE SHOWCASE --- */}
+        <InteractiveShowcase booths={booths} />
 
-        <Box mt={5}>
+        {/* --- BOOKING FORM --- */}
+        <Box mt={{ xs: 4, md: 6 }}>
           <BookingForm booths={booths} />
         </Box>
         

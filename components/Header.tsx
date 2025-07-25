@@ -36,30 +36,30 @@ const Header = () => {
 
   const drawer = (
     <Box onClick={handleDrawerToggle} sx={{ textAlign: 'center', bgcolor: 'background.paper', height: '100%' }}>
-      <Box sx={{ my: 2, alignItems: 'center', display: 'flex', flexDirection: 'column', gap: 1 }}>
-        <Link href="/booking" style={{ textDecoration: 'none' }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0 }}>
-            <Box
-              component="img"
-              src="/Logo.png"
-              alt="Logo"
-              sx={{ 
-                height: { xs: '32px', sm: '32px' }, // Responsive height
-                width: 'auto' // Ensures aspect ratio is maintained
-              }}
-            />
-            <Box
-              component="img"
-              src="/Name.png"
-              alt="Website Name"
-              sx={{ 
-                height: { xs: '32px', sm: '20px' }, // Responsive height
-                width: 'auto' // Ensures aspect ratio is maintained
-              }}
-            />
+          <Box sx={{ flex: 1, display: 'flex', justifyContent: 'center', my: 2 }}>
+            <Link href="/booking" style={{ textDecoration: 'none' }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Box
+                  component="img"
+                  src="/Logo.png"
+                  alt="Logo"
+                  sx={{ 
+                    height: { xs: '32px', sm: '32px' },
+                    width: 'auto'
+                  }}
+                />
+                <Box
+                  component="img"
+                  src="/Name.png"
+                  alt="Website Name"
+                  sx={{ 
+                    height: { xs: '20px', sm: '20px' },
+                    width: 'auto'
+                  }}
+                />
+              </Box>
+            </Link>
           </Box>
-          </Link>
-      </Box>
       <List>
         {navItems.map((item) => (
           <ListItem key={item.name} disablePadding>
@@ -75,64 +75,72 @@ const Header = () => {
   return (
     <>
       <AppBar component="nav" position="sticky" sx={{ 
-        bgcolor: 'rgba(255, 255, 255, 0.8)',
+        bgcolor: '#f1e9d2',
         backdropFilter: 'blur(10px)',
         boxShadow: '0 2px 10px rgba(0,0,0,0.05)',
         color: 'text.primary'
       }}>
-        <Toolbar sx={{ justifyContent: 'space-between' }}>
-          {/* Logo and Name on the left, now with responsive sizing */}
-          <Link href="/booking" style={{ textDecoration: 'none' }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0 }}>
-            <Box
-              component="img"
-              src="/Logo.png"
-              alt="Logo"
-              sx={{ 
-                height: { xs: '40px', sm: '32px' }, // Responsive height
-                width: 'auto' // Ensures aspect ratio is maintained
-              }}
-            />
-            <Box
-              component="img"
-              src="/Name.png"
-              alt="Website Name"
-              sx={{ 
-                height: { xs: '36px', sm: '20px' }, // Responsive height
-                width: 'auto' // Ensures aspect ratio is maintained
-              }}
-            />
-          </Box>
-        </Link>
+        <Toolbar>
+          {/* Left Spacer */}
+          <Box sx={{ flex: 1, display: 'flex' }} />
 
-          {isMobile ? (
-            <IconButton
-              color="inherit"
-              aria-label="open drawer"
-              edge="start"
-              onClick={handleDrawerToggle}
-            >
-              <MenuIcon />
-            </IconButton>
-          ) : (
-            <Box>
-              {navItems.map((item) => (
-                <Button 
-                  key={item.name} 
+          {/* Centered Logo and Name */}
+          <Box sx={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
+            <Link href="/booking" style={{ textDecoration: 'none' }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Box
+                  component="img"
+                  src="/Logo.png"
+                  alt="Logo"
                   sx={{ 
-                    color: 'text.primary',
-                    fontWeight: 'bold',
-                    '&:hover': {
-                      backgroundColor: 'primary.light',
-                      color: 'primary.main',
-                    }
+                    height: { xs: '32px', sm: '32px' },
+                    width: 'auto'
                   }}
-                >
-                  {item.name}
-                </Button>
-              ))}
-            </Box>
-          )}
+                />
+                <Box
+                  component="img"
+                  src="/Name.png"
+                  alt="Website Name"
+                  sx={{ 
+                    height: { xs: '20px', sm: '20px' },
+                    width: 'auto'
+                  }}
+                />
+              </Box>
+            </Link>
+          </Box>
+          
+          {/* Right Navigation */}
+          <Box sx={{ flex: 1, display: 'flex', justifyContent: 'flex-end' }}>
+            {isMobile ? (
+              <IconButton
+                color="inherit"
+                aria-label="open drawer"
+                edge="end"
+                onClick={handleDrawerToggle}
+              >
+                <MenuIcon />
+              </IconButton>
+            ) : (
+              <Box>
+                {navItems.map((item) => (
+                  <Button 
+                    key={item.name} 
+                    sx={{ 
+                      color: 'text.primary',
+                      fontWeight: 'bold',
+                      '&:hover': {
+                        backgroundColor: 'primary.light',
+                        color: 'primary.main',
+                      }
+                    }}
+                  >
+                    {item.name}
+                  </Button>
+                ))}
+              </Box>
+            )}
+          </Box>
         </Toolbar>
       </AppBar>
       
@@ -142,9 +150,7 @@ const Header = () => {
           open={mobileOpen}
           onClose={handleDrawerToggle}
           anchor="right"
-          ModalProps={{
-            keepMounted: true,
-          }}
+          ModalProps={{ keepMounted: true }}
           sx={{
             display: { xs: 'block', md: 'none' },
             '& .MuiDrawer-paper': { boxSizing: 'border-box', width: 240 },
