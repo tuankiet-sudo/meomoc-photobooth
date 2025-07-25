@@ -34,7 +34,10 @@ export default async function BookingPage() {
 
   return (
     <Box sx={{ bgcolor: "background.default", minHeight: "100vh" }}>
-      <Container sx={{ py: { xs: 3, md: 5 } }}>
+      <Container sx={{
+        py: { xs: 3, md: 5 },
+        px: { xs: 3, sm: 3 }  
+      }}>
 
         {/* --- REFINED HERO SECTION --- */}
         <Box sx={{ textAlign: 'center', mb: 3 }}>
