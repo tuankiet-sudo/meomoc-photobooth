@@ -37,6 +37,7 @@ async function getAdminData() {
 
 export default async function AdminPage() {
   const queueData = await getAdminData();
+  console.log("Queue Data:", queueData);
 
   return (
     <Box sx={{ bgcolor: "background.default", minHeight: "100vh", py: 4 }}>
