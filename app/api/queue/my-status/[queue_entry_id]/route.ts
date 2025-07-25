@@ -6,7 +6,7 @@ export async function GET(_: Request, { params }: { params: Promise<{ queue_entr
 
   const { data: entry, error: entryError } = await supabaseAdmin
     .from('queue_entries')
-    .select('id, booth_id, ordinal_number, arrival_status')
+    .select('id, booth_id, ordinal_number, status')
     .eq('id', queue_entry_id)
     .single();
 
@@ -30,7 +30,7 @@ export async function GET(_: Request, { params }: { params: Promise<{ queue_entr
     // --- Add `booth_name` to the response ---
     booth_name: booth?.name,
     ordinal_number: entry.ordinal_number,
-    arrival_status: entry.arrival_status,
+    status: entry.status,
     number_of_customers_before: Math.max(0, people_ahead),
     estimated_wait_time
   });

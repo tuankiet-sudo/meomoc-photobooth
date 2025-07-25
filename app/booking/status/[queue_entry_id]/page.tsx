@@ -6,13 +6,12 @@ import { Box, Typography, Container, CircularProgress, Paper, Divider, Chip, Tex
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import PeopleOutlineIcon from '@mui/icons-material/PeopleOutline';
 import LoopIcon from '@mui/icons-material/Loop';
-import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-
+import Link from "next/link";
 
 interface QueueStatus {
   booth_name: string;
   ordinal_number: number;
-  arrival_status: string;
+  status: string;
   number_of_customers_before: number;
   estimated_wait_time: number;
   current_customer_ordinal: number;
@@ -64,6 +63,7 @@ export default function StatusPage() {
         const response = await fetch(`/api/queue/my-status/${queue_entry_id}`);
         if (!response.ok) throw new Error("Huhu, không tải được trạng thái. Bạn F5 thử xem!");
         const data = await response.json();
+        console.log("Fetched status data:", data);
         const current_customer_ordinal = data.ordinal_number - data.number_of_customers_before - 1;
         setStatus({ ...data, current_customer_ordinal });
         setError(null);
@@ -100,22 +100,15 @@ export default function StatusPage() {
       <Paper elevation={4} sx={{ p: {xs: 2, sm: 4}, borderRadius: 4, textAlign: 'center', bgcolor: 'rgba(255, 255, 255, 0.85)' }}>
         <Typography variant="h5" component="h1" color="text.secondary">
           Số thứ tự của bạn tại
-
         </Typography>
-
-        
-
-        {/* --- Display Booth Name Here --- */}
-
-        <Typography variant="h4" component="p" sx={{ color: 'primary.main', mb: 1 }}>
-
+        <Typography variant="h4" component="p" sx={{ mb: 1 }} color={status?.booth_name === "OverBeann" ? "#380c0f" : status?.booth_name === "Forest Winkk" ? "#00b14f" : "#880000"}>
           {status?.booth_name}
         </Typography>
         <Typography variant="h1" component="div" sx={{ fontWeight: 700, color: '#007aff', my: 2, fontSize: { xs: '6rem', sm: '8rem' } }}>
           {status?.ordinal_number.toString().padStart(3, '0')}
         </Typography>
         
-        <Chip label={statusToVietnamese(status?.arrival_status || '')} color="primary" sx={{mb: 2}}/>
+        <Chip label={statusToVietnamese(status?.status || '')} color="primary" sx={{mb: 2}}/>
         
         <Divider sx={{ my: 2 }}><Typography variant="caption">Tình hình hiện tại</Typography></Divider>
 
@@ -172,6 +165,19 @@ export default function StatusPage() {
             </Box>
         </Box>
 
+        <Box sx={{ mt: 3 }}>
+
+          <Link href="/booking" passHref>
+
+            <Button variant="outlined" color="secondary" fullWidth>
+
+              Đặt Thêm Booth Khác
+
+            </Button>
+
+          </Link>
+
+        </Box>
       </Paper>
     </Container>
   );
