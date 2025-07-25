@@ -6,6 +6,7 @@ import { ThemeProvider } from "@mui/material/styles";
 import theme from "./theme";
 import { CssBaseline } from "@mui/material";
 import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
 // Configure Paytone One
 const paytoneOne = Paytone_One({
@@ -35,6 +36,7 @@ export default function RootLayout({
         >
           <Header />
           <main>{children}</main>
+          <Footer />
         </body>
       </ThemeProvider>
     </html>
