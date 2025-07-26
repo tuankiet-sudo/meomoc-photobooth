@@ -1,9 +1,10 @@
 import { supabaseAdmin } from "@/utils/supabase/admin";
-import { Box, Typography, Container, Grid } from "@mui/material";
-import { BoothQueue } from "./BoothQueue";
+import { Box, Typography, Container } from "@mui/material";
+import { AdminDashboard } from "./AdminDashboard"; // <-- Import the new component
 
-async function getAdminData() {
-  // Call the new SQL function instead of doing complex selects
+export const dynamic = 'force-dynamic';
+
+async function getInitialAdminData() {
   const { data, error } = await supabaseAdmin.rpc('get_queue_data');
 
   if (error) {
@@ -22,13 +23,12 @@ async function getAdminData() {
         queue: [],
       });
     }
-    // Only add queue entries if they exist (LEFT JOIN can produce nulls)
     if (row.queue_entry_id) {
       boothsMap.get(row.booth_id).queue.push({
         id: row.queue_entry_id,
         ordinal_number: row.queue_ordinal_number,
         customer_name: row.customer_name,
-        customer_phone: row.customer_phone || null, // Ensure phone is included
+        customer_phone: row.customer_phone,
       });
     }
   }
@@ -36,8 +36,7 @@ async function getAdminData() {
 }
 
 export default async function AdminPage() {
-  const queueData = await getAdminData();
-  console.log("Queue Data:", queueData);
+  const initialData = await getInitialAdminData();
 
   return (
     <Box sx={{ bgcolor: "background.default", minHeight: "100vh", py: 4 }}>
@@ -48,13 +47,9 @@ export default async function AdminPage() {
         <Typography variant="h5" color="text.secondary" sx={{ mb: 4 }}>
           Quản lý hàng chờ các booth
         </Typography>
-        <Grid container spacing={4}>
-          {queueData.map((booth) => (
-            <Grid size={{xs:12, md:6, lg:4}} key={booth.id}>
-              <BoothQueue booth={booth} />
-            </Grid>
-          ))}
-        </Grid>
+        
+        {/* Pass initial data to the client component */}
+        <AdminDashboard initialBooths={initialData} />
       </Container>
     </Box>
   );
